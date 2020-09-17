@@ -1,10 +1,7 @@
 """
 model_base.py
-
 Model base class.
-
 Written by Phil Ferriere
-
 Licensed under the MIT License (see LICENSE for details)
 """
 
@@ -56,7 +53,7 @@ class ModelBase:
                     self.opts['cyclic_lr_stepsize'] = 50
                     self.opts['max_steps'] = 500  # max number of training iterations (i.e., batches to run)
 
-        tf.reset_default_graph()
+        # tf.reset_default_graph()
         self.graph = tf.Graph()
         with self.graph.as_default():
             # Configure a TF session, if one doesn't already exist
@@ -132,9 +129,9 @@ class ModelBase:
 
         if self.opts['verbose']:
             if save_path is None:
-                msg = f"... model wasn't saved -- its score ({ranking_value:.2f}) doesn't outperform other checkpoints"
+                msg = "... model wasn't saved -- its score ({ranking_value:.2f}) doesn't outperform other checkpoints"
             else:
-                msg = f"... model saved in {save_path}"
+                msg = "... model saved in {save_path}"
             print(msg)
 
     def load_ckpt(self):
@@ -148,7 +145,7 @@ class ModelBase:
                 # In fine-tuning mode, we just want to load the trained params from the file and that's it...
                 assert(tf.train.checkpoint_exists(self.opts['ckpt_path']))
                 if self.opts['verbose']:
-                    print(f"Initializing from pre-trained model at {self.opts['ckpt_path']} for finetuning...\n")
+                    print("Initializing from pre-trained model at {self.opts['ckpt_path']} for finetuning...\n")
                 # ...however, the AdamOptimizer also stores variables in the graph, so reinitialize them as well
                 self.sess.run(tf.variables_initializer(self.optim.variables()))
                 # Now initialize the trained params with actual values from the checkpoint
@@ -166,14 +163,14 @@ class ModelBase:
                 if self.last_ckpt:
                     # We're resuming a session -> initialize the graph with the content of the checkpoint
                     if self.opts['verbose']:
-                        print(f"Initializing model from previous checkpoint {self.last_ckpt} to resume training...\n")
+                        print("Initializing model from previous checkpoint {self.last_ckpt} to resume training...\n")
                     self.saver.restore(self.sess, self.last_ckpt)
                     if self.opts['verbose']:
                         print("... model initialized")
                 else:
                     # Initialize all the variables of the graph
                     if self.opts['verbose']:
-                        print(f"Initializing model with random values for initial training...\n")
+                        print("Initializing model with random values for initial training...\n")
                     assert (self.mode in ['train_noval', 'train_with_val'])
                     self.sess.run(tf.global_variables_initializer())
                     if self.opts['verbose']:
@@ -183,7 +180,7 @@ class ModelBase:
             self.last_ckpt = self.opts['ckpt_path']
             assert(self.last_ckpt is not None)
             if self.opts['verbose']:
-                print(f"Loading model checkpoint {self.last_ckpt} for eval or testing...\n")
+                print("Loading model checkpoint {self.last_ckpt} for eval or testing...\n")
             self.saver.restore(self.sess, self.last_ckpt)
             if self.opts['verbose']:
                 print("... model loaded")
@@ -354,9 +351,9 @@ class ModelBase:
                     if self.opts['lr_policy'] == 'cyclic':
                         if k in ['init_lr', 'lr_boundaries', 'lr_values']:
                             continue
-                print(f"  {k:22} {v}")
-            print(f"  {'mode':22} {self.mode}")
+                print("  {k:22} {v}")
+            print("  {'mode':22} {self.mode}")
             # if self.mode in ['train_noval', 'train_with_val']:
             if self.dbg:
                 self.summary()
-            print(f"  {'trainable params':22} {np.sum([np.prod(v.shape) for v in tf.trainable_variables()])}")
+            print("  {'trainable params':22} {np.sum([np.prod(v.shape) for v in tf.trainable_variables()])}")
